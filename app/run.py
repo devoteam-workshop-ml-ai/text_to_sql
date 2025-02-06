@@ -2,7 +2,7 @@ import streamlit as st
 from graph import graph, config
 from credentials import _set_env
 import sqlite3  # Remplacez par votre base de données
-
+import os
 # Vérifier si on a déjà une requête stockée
 if "sql_query" not in st.session_state:
     st.session_state.sql_query = None
@@ -11,7 +11,12 @@ if "sql_result" not in st.session_state:
 
 # Configuration des clés API
 #_set_env("LANGCHAIN_API_KEY")
-_set_env("GROQ_API_KEY")
+
+if not os.environ.get("GROQ_API_KEY"):
+    groq_token = st.text_input("Entrez votre clé API Groq :")
+    _set_env(groq_token)
+else:
+    _set_env("GROQ_API_KEY")
 
 # Interface utilisateur
 st.title("Générateur de Requêtes SQL")
