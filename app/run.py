@@ -1,4 +1,4 @@
-from memory import graph, config
+from graph import graph, config
 
 from credentials import _set_env
 
