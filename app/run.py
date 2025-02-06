@@ -6,7 +6,7 @@ _set_env("LANGCHAIN_API_KEY")
 _set_env("GROQ_API_KEY")
 
 for step in graph.stream(
-    {"question": "How many employees are there?"},
+    {"question": input("Please enter your question: ")},
     config,
     stream_mode="updates",
 ):
