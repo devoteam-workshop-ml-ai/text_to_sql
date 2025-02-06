@@ -6,11 +6,12 @@ from llm import llm
 from state import State
 from query_prompt import query_prompt_template
 
+from _utils.dump_utils import dump_data
+
 class QueryOutput(TypedDict):
     """Generated SQL query."""
 
     query: Annotated[str, ..., "Syntactically valid SQL query."]
-
 
 def write_query(state: State):
     """Generate SQL query to fetch information."""
@@ -24,4 +25,8 @@ def write_query(state: State):
     )
     structured_llm = llm.with_structured_output(QueryOutput)
     result = structured_llm.invoke(prompt)
+    try:
+        dump_data(result["query"])
+    except Exception as e:
+        print(f"Error dumping query to file : {e}", )
     return {"query": result["query"]}
