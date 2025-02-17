@@ -2,7 +2,7 @@ import sqlite3
 import streamlit as st
 
 from pathlib import Path
-
+from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_groq import ChatGroq
 from langchain.agents import create_sql_agent
 from langchain.sql_database import SQLDatabase
@@ -27,7 +27,7 @@ selected_opt = st.sidebar.radio(label="Choose suitable option", options=radio_op
 if radio_opt.index(selected_opt) == 1:
     st.sidebar.warning(INJECTION_WARNING, icon="⚠️")
     db_uri = st.sidebar.text_input(
-        label="Database URI", placeholder="sqlite:///data/databse/Chinook.db"
+        label="Database URI", placeholder="mysql://user:pass@hostname:port/db"
     )
 else:
     db_uri = LOCALDB
@@ -46,10 +46,21 @@ if not groq_api_key:
     st.info("Please add your GROQ API key to continue.")
     st.stop()
 
+# Configure the rate limiter (6000 tokens for GROQ)
+rate_limiter = InMemoryRateLimiter(
+    max_bucket_size=6000,
+)
+
 # Setup agent
 
-
-llm = ChatGroq(groq_api_key=groq_api_key, model="llama3-8b-8192", streaming=True, temperature=0)
+llm = ChatGroq(
+    groq_api_key=groq_api_key,
+    model="llama3-8b-8192",
+    streaming=True,
+    temperature=0,
+    rate_limiter=rate_limiter,
+    max_tokens=6000
+)
 
 
 @st.cache_resource(ttl="2h")
@@ -57,7 +68,8 @@ def configure_db(db_uri):
     if db_uri == LOCALDB:
         # Make the DB connection read-only to reduce risk of injection attacks
         # See: https://python.langchain.com/docs/security
-        db_filepath = (Path(__file__).parent / "Chinook.db").absolute()
+        db_filepath = (Path(__file__).parent.parent /"data"/"database"/"Chinook.db").absolute()
+        print("db_filepath : ", db_filepath)
         creator = lambda: sqlite3.connect(f"file:{db_filepath}?mode=ro", uri=True)
         return SQLDatabase(create_engine("sqlite:///", creator=creator))
     return SQLDatabase.from_uri(database_uri=db_uri)
