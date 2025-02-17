@@ -24,6 +24,7 @@ You can refer to this page to setup the project
     Then get Chinook.db
 
     ```shell
+    cd ./data/database/
     curl -s https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql | sqlite3 Chinook.db
     ```
 
@@ -34,5 +35,5 @@ You can refer to this page to setup the project
 4. run
 
     ```shell
-    python ./app/run.py
+    streamlit run ./src/app.py
     ```

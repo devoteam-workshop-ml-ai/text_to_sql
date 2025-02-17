@@ -1,5 +1,0 @@
-SELECT COUNT(*) FROM Employee
-SELECT Artist.Name, COUNT(*) as AlbumCount FROM Album JOIN Artist ON Album.ArtistId = Artist.ArtistId GROUP BY Artist.Name ORDER BY AlbumCount DESC LIMIT 1
-SELECT COUNT(*) FROM Employee
-SELECT COUNT(*) FROM Customer WHERE City='Prague';
-SELECT COUNT(*) FROM Customer WHERE City = 'Prague'
