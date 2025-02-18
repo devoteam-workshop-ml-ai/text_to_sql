@@ -52,7 +52,6 @@ rate_limiter = InMemoryRateLimiter(
 )
 
 # Setup agent
-
 llm = ChatGroq(
     groq_api_key=groq_api_key,
     model="llama3-8b-8192",
@@ -84,6 +83,7 @@ agent = create_sql_agent(
     toolkit=toolkit,
     verbose=True,
     agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    handle_parsing_errors=True
 )
 
 if "messages" not in st.session_state or st.sidebar.button("Clear message history"):
