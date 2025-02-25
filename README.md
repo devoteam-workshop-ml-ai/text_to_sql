@@ -33,3 +33,20 @@ You can refer to this page to setup the project
     ```shell
     streamlit run ./src/app.py
     ```
+
+4. structure
+
+```shell
+.
+├── CHANGELOG.md
+├── README.md
+├── cache.db
+├── data
+│   ├── database
+│   │   └── Chinook.db
+│   └── dumps
+├── requirements.txt
+└── src
+    ├── __pycache__
+    └── app.py
+```
