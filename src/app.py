@@ -47,7 +47,7 @@ if not groq_api_key:
     st.info("Please add your GROQ API key to continue.")
     st.stop()
 
-# Configuration du rate limiter (6000 tokens pour GROQ)
+# Configuration du rate limiter (6000 tokens / bucket pour GROQ)
 rate_limiter = InMemoryRateLimiter(
     max_bucket_size=6000,
 )

@@ -174,3 +174,4 @@ cython_debug/
 pyproject.toml
 .gitignore
 data/dumps_sql_gen.txt
+cache.db
