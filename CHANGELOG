@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.0.1] - 2025-02-27
+
+### Added
+
+### Changed
+
+### Fixed
+
+- removed data/database and data/dumps folders from folders to commit.
+- removed .md file extension to CHANGELOG
+
 ## [1.0.0] - 2025-02-25
 
 ### Added
@@ -8,6 +19,7 @@
 
 - langchain agent architecture
 - repository structure
+- query cache system
 
 ### Fixed
 
