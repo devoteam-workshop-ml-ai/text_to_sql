@@ -1,10 +1,11 @@
 import streamlit as st
 
+from dotenv import load_dotenv
+
 from langchain.agents import create_sql_agent
+from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import StreamlitCallbackHandler
-
-from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 
 from callbacks import CustomSQLCallbackHandler
 from db import INJECTION_WARNING, LOCALDB, configure_db
@@ -14,6 +15,8 @@ from utils.cache_utils import add_to_cache, get_cached_response, extract_sql_que
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
     st.set_page_config(page_title="LangChain: Chat with SQL DB", page_icon="🦜")
     st.title("🦜 LangChain: Chat with SQL DB")
 
@@ -48,11 +51,12 @@ if __name__ == "__main__":
 
     # Setup LLM Agent
     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-    agent = create_sql_agent(
+
+    agent_executor = create_sql_agent(
         llm=llm,
         toolkit=toolkit,
         verbose=True,
-        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION
     )
 
     ####################################
@@ -95,12 +99,12 @@ if __name__ == "__main__":
                     # - le callback Streamlit pour l'affichage
                     callbacks = [
                         CustomSQLCallbackHandler(),
-                        StreamlitCallbackHandler(st.container()),
+                        StreamlitCallbackHandler(st.container())
                     ]
-                    response = agent.run(
+                    response = agent_executor.run(
                         input=user_query,
                         callbacks=callbacks,
-                        handle_parsing_errors=True,
+                        handle_parsing_errors=True
                     )
                     st.session_state.messages.append(
                         {"role": "assistant", "content": response}
