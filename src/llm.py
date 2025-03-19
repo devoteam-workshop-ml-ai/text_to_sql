@@ -13,6 +13,5 @@ llm = ChatGroq(
     streaming=True,
     temperature=0,
     rate_limiter=rate_limiter,
-    max_tokens=6000
+    max_tokens=6000,
 )
-

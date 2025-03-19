@@ -7,18 +7,10 @@ from langchain.callbacks import StreamlitCallbackHandler
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 
 from callbacks import CustomSQLCallbackHandler
-from db import (
-    INJECTION_WARNING,
-    LOCALDB,
-    configure_db
-)
+from db import INJECTION_WARNING, LOCALDB, configure_db
 from exceptions import CachedResponseFoundError
 from llm import llm
-from utils.cache_utils import (
-    add_to_cache,
-    get_cached_response,
-    extract_sql_query
-)
+from utils.cache_utils import add_to_cache, get_cached_response, extract_sql_query
 
 
 if __name__ == "__main__":
@@ -68,7 +60,9 @@ if __name__ == "__main__":
     ####################################
 
     if "messages" not in st.session_state or st.sidebar.button("Clear message history"):
-        st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+        st.session_state["messages"] = [
+            {"role": "assistant", "content": "How can I help you?"}
+        ]
 
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
@@ -82,12 +76,16 @@ if __name__ == "__main__":
     if user_query:
         st.session_state.messages.append({"role": "user", "content": user_query})
         st.chat_message("user").write(user_query)
-        
+
         # 1. Vérifier dans le cache si une requête utilisateur similaire existe
-        cached_entry = get_cached_response(user_query, threshold=0.7, field='user_query')
+        cached_entry = get_cached_response(
+            user_query, threshold=0.7, field="user_query"
+        )
         if cached_entry is not None:
             cached_response = cached_entry[2]
-            st.session_state.messages.append({"role": "assistant", "content": cached_response})
+            st.session_state.messages.append(
+                {"role": "assistant", "content": cached_response}
+            )
             st.chat_message("assistant").write(cached_response)
         else:
             try:
@@ -97,10 +95,16 @@ if __name__ == "__main__":
                     # - le callback Streamlit pour l'affichage
                     callbacks = [
                         CustomSQLCallbackHandler(),
-                        StreamlitCallbackHandler(st.container())
+                        StreamlitCallbackHandler(st.container()),
                     ]
-                    response = agent.run(input=user_query, callbacks=callbacks, handle_parsing_errors=True)
-                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    response = agent.run(
+                        input=user_query,
+                        callbacks=callbacks,
+                        handle_parsing_errors=True,
+                    )
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": response}
+                    )
                     st.write(response)
                     # Extraction de la requête SQL générée dans la réponse finale
                     sql_query = extract_sql_query(response)
@@ -108,10 +112,19 @@ if __name__ == "__main__":
             except CachedResponseFoundError as e:
                 # Si une requête SQL similaire est trouvée durant la réflexion, renvoyer la réponse en cache.
                 response = e.response
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": response}
+                )
                 st.chat_message("assistant").write(response)
             except ValueError as e:
-                st.error("⚠️ Une erreur est survenue lors du traitement de votre requête. Essayez de reformuler votre question.")
-                st.session_state.messages.append({"role": "assistant", "content": "Je n'ai pas pu comprendre votre question. Pouvez-vous la reformuler ?"})
+                st.error(
+                    "⚠️ Une erreur est survenue lors du traitement de votre requête. Essayez de reformuler votre question."
+                )
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": "Je n'ai pas pu comprendre votre question. Pouvez-vous la reformuler ?",
+                    }
+                )
             except Exception as e:
                 st.error(f"🚨 Erreur inattendue : {str(e)}")

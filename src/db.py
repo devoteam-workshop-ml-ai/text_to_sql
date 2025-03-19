@@ -17,7 +17,9 @@ LOCALDB = "USE_LOCALDB"
 def configure_db(db_uri):
     if db_uri == LOCALDB:
         # Connexion en lecture seule pour réduire les risques d'injection
-        db_filepath = (Path(__file__).parent.parent / "data" / "database" / "Chinook.db").absolute()
+        db_filepath = (
+            Path(__file__).parent.parent / "data" / "database" / "Chinook.db"
+        ).absolute()
         print("db_filepath : ", db_filepath)
         creator = lambda: sqlite3.connect(f"file:{db_filepath}?mode=ro", uri=True)
         return SQLDatabase(create_engine("sqlite:///", creator=creator))

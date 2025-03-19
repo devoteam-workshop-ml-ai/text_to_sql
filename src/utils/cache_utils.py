@@ -9,20 +9,24 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Gestion du cache (SQLite)        #
 ####################################
 
+
 def get_cache_conn():
     """Retourne une connexion à la base cache (cache.db) en créant la table si nécessaire."""
     conn = sqlite3.connect("cache.db")
     cursor = conn.cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS cache (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_query TEXT,
             sql_query TEXT,
             response TEXT
         )
-    """)
+    """
+    )
     conn.commit()
     return conn
+
 
 def extract_sql_query(response_text: str) -> str:
     """
@@ -33,16 +37,20 @@ def extract_sql_query(response_text: str) -> str:
         return match.group(1).strip()
     return ""
 
+
 def add_to_cache(user_query: str, sql_query: str, response: str):
     """Ajoute une entrée dans le cache."""
     conn = get_cache_conn()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO cache (user_query, sql_query, response) VALUES (?, ?, ?)",
-                   (user_query, sql_query, response))
+    cursor.execute(
+        "INSERT INTO cache (user_query, sql_query, response) VALUES (?, ?, ?)",
+        (user_query, sql_query, response),
+    )
     conn.commit()
     conn.close()
 
-def get_cached_response(query: str, threshold: float = 0.8, field: str = 'user_query'):
+
+def get_cached_response(query: str, threshold: float = 0.8, field: str = "user_query"):
     """
     Cherche dans le cache une entrée dont le texte (du champ user_query ou sql_query)
     est similaire à la requête `query` (selon un seuil de similarité).
@@ -55,7 +63,7 @@ def get_cached_response(query: str, threshold: float = 0.8, field: str = 'user_q
     conn.close()
     if not rows:
         return None
-    texts = [row[0] if field == 'user_query' else row[1] for row in rows]
+    texts = [row[0] if field == "user_query" else row[1] for row in rows]
     vectorizer = TfidfVectorizer().fit(texts + [query])
     vec_texts = vectorizer.transform(texts)
     vec_query = vectorizer.transform([query])
