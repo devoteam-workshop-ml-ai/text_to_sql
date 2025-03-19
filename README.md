@@ -36,7 +36,7 @@ You can refer to this page to setup the project
 
 4. structure
 
-```shell
+```plain-text
 .
 ├── CHANGELOG.md
 ├── README.md
